@@ -32,4 +32,12 @@ public class UsualMatrix extends Matrix {
   public Matrix createMatrix(int rows, int columns) {
     return new UsualMatrix(rows, columns);
   }
+
+  public void makeRandom(){
+    for (int i = 0; i < rows; i++){
+      for (int j = 0; j < columns; j++){
+        setElement(i, j, (int)(10*Math.random()));
+      }
+    }
+  }
 }
