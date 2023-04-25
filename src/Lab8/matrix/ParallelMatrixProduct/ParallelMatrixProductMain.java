@@ -4,7 +4,7 @@ import Lab8.matrix.UsualMatrix;
 
 public class ParallelMatrixProductMain {
     public static void main(String[] args){
-        int size = 2000;
+        int size = 1000;
         UsualMatrix matrix1 = new UsualMatrix(size);
         matrix1.makeRandom();
 
