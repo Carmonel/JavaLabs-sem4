@@ -1,23 +1,30 @@
 package Lab8.matrix.ParallelMatrixProduct;
 
-import java.util.Arrays;
 
-class Quicksort<T> extends Thread {
+import java.util.Arrays;
+import java.util.Objects;
+
+class Quicksort<T> implements Runnable{
     private final Comparable<T>[] arr;
     private final int low;
     private final int high;
-    public static int numThreads = Runtime.getRuntime().availableProcessors();
-    public static int count = 0;
+    Thread[] threads;
+    boolean txt;
 
-    public Quicksort(Comparable<T>[] arr, int low, int high){
+    public Quicksort(Comparable<T>[] arr, int low, int high, Thread[] threads, boolean outInfo){
         this.arr = arr;
         this.low = low;
         this.high = high;
-        run();
+        this.threads = threads;
+        this.txt = outInfo;
     }
 
     public void run(){
-        parallelQuicksort(arr,low,high);
+        try {
+            parallelQuicksort(arr,low,high);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void quicksort(Comparable<T>[] arr, int low, int high){
@@ -28,32 +35,28 @@ class Quicksort<T> extends Thread {
         }
     }
 
-    public void parallelQuicksort(Comparable<T>[] arr, int low, int high){
-        if (high>low){
-            int i = partition(arr,low,high);
-            if (count < numThreads){
-                count++;
-                Quicksort<T> quicksort  = new Quicksort<T>(arr, low, i-1);
-                quicksort.start();
-                try{
-                    quicksort.join();
+    public void parallelQuicksort(Comparable<T>[] arr, int low, int high) throws InterruptedException {
+        if (high > low){
+            int mid = partition(arr, low, high);
+            boolean founded1 = false;
+            boolean founded2 = false;
+            while (!founded2) {
+                for (int i = 0; i < threads.length; i++) {
+                    if ((!threads[i].isAlive()) && (!founded1)) {
+                        threads[i] = new Thread(new Quicksort<T>(arr, low, mid - 1, threads, txt));
+                        threads[i].start();
+                        threads[i].join();
+                        founded1 = true;
+                        continue;
+                    }
+                    if (!threads[i].isAlive()) {
+                        threads[i] = new Thread(new Quicksort<T>(arr, mid + 1, high, threads, txt));
+                        threads[i].start();
+                        threads[i].join();
+                        founded2 = true;
+                        break;
+                    }
                 }
-                catch (InterruptedException ignored){}
-            }
-            else{
-                quicksort(arr,low,i-1);
-            }
-            if (count < numThreads){
-                count++;
-                Quicksort<T> quicksort  = new Quicksort<T>(arr, i+1, high);
-                quicksort.start();
-                try{
-                    quicksort.join();
-                }
-                catch (InterruptedException ignored){}
-            }
-            else{
-                quicksort(arr,i+1,high);
             }
         }
     }
@@ -65,14 +68,15 @@ class Quicksort<T> extends Thread {
         for (int j = low; j <= high - 1; j++) {
             if (arr[j].compareTo((T) pivot) < 0) {
                 i++;
-                swap(A, i, j);
+                swap(i, j);
             }
         }
-        swap(A, i + 1, high);
+        swap(i + 1, high);
         return (i + 1);
     }
 
-    public void swap(Comparable<T>[] A,int i,int j){
+    public void swap(int i,int j){
+        if (txt) System.out.println("swap: " + arr[i] + " " + arr[j]);
         Comparable<T> temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
@@ -98,14 +102,34 @@ class Quicksort<T> extends Thread {
 
 public class ParallelQuicksort {
     public static void main(String[] args){
-        int size = 10;
+        TimeChecher time = new TimeChecher();
+        int size = 10000;
         Integer[] array = new Integer[size];
+        int[] array2 = new int[size];
         for (int i = 0; i < size; i ++){
             array[i] = (int)(100*Math.random());
+            array2[i] = array[i];
         }
+        int threadCount = 150;
+        Thread[] threads = new Thread[threadCount];
+        for (int i = 0; i < threadCount; i++) threads[i] = new Thread();
 
-        System.out.println(Arrays.toString(array));
-        Quicksort<Integer> result = new Quicksort<>(array, 0, size-1);
-        System.out.println(result);
+        Quicksort<Integer> result = new Quicksort<>(array, 0, array.length-1, threads, false);
+        result.run();
+        System.out.println("Threads -> " + time.printTimeFromStart());
+
+        time.setNewStart();
+        standartQuickSort a = new standartQuickSort();
+        a.sort(array2, 0, array2.length-1);
+        System.out.println("Standart -> " + time.printTimeFromStart());
+
+        boolean check = true;
+        for (int i = 0; i < size; i++){
+            if (array[i] != array2[i]){
+                check = false;
+                break;
+            }
+        }
+        if (check) System.out.println("true");
     }
 }
