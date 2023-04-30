@@ -11,16 +11,11 @@ public class InternetCafe {
     }
 }
 
-class Pair implements Comparable<Pair>{
+class Pair{
     public int num, time;
     Pair(int num){
         this.num = num;
         time = (int)(10000*Math.random());
-    }
-
-    @Override
-    public int compareTo(Pair o) {
-        return o.num;
     }
 }
 
@@ -31,19 +26,16 @@ class InternetCafeClass{
     public InternetCafeClass(int threadsCount, int touristsCount){
         computers = new Thread[threadsCount];
 
-        for (int i = 0; i < threadsCount; i++){
-            computers[i] = new Thread();
-        }
+        for (int i = 0; i < threadsCount; i++) computers[i] = new Thread();
 
         touristQueue = new LinkedList<Pair>();
         for (int i = 0; i < touristsCount; i++) touristQueue.add(new Pair(i));
 
         System.out.println("Cafe now is open!");
         while (!touristQueue.isEmpty()){
-
             for (int i = 0; i < threadsCount; i++){
                 if (!computers[i].isAlive()){
-                    computers[i] = new Thread(new PC(touristQueue.poll()));
+                    computers[i] = new PC(touristQueue.poll());
                     computers[i].start();
                 }
             }
