@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 public class InternetCafe {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter N (comp count) and M (tourists): ");
         InternetCafeClass ICC = new InternetCafeClass(sc.nextInt(), sc.nextInt());
