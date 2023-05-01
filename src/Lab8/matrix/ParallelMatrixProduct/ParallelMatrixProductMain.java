@@ -1,5 +1,6 @@
 package Lab8.matrix.ParallelMatrixProduct;
 
+import Lab8.TimeChecker;
 import Lab8.matrix.UsualMatrix;
 
 public class ParallelMatrixProductMain {
@@ -11,7 +12,7 @@ public class ParallelMatrixProductMain {
         UsualMatrix matrix2 = new UsualMatrix(size);
         matrix2.makeRandom();
 
-        TimeChecher time = new TimeChecher();
+        TimeChecker time = new TimeChecker();
         UsualMatrix resDefault = matrix1.product(matrix2);
         System.out.println("Default product time: " + time.printTimeFromStart());
 

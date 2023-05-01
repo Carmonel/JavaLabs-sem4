@@ -1,8 +1,7 @@
-package Lab8.matrix.ParallelMatrixProduct;
+package Lab8.quicksort;
 
 // Java program for implementation of QuickSort
-class standartQuickSort
-{
+public class StandartQuickSort {
     /* This function takes last element as pivot,
     places the pivot element at its correct
     position in sorted array, and places all
