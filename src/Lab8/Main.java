@@ -1,4 +1,9 @@
-package Lab8.matrix;
+package Lab8;
+
+import Lab8.matrix.Matrix;
+import Lab8.matrix.SparseMatrix;
+import Lab8.matrix.SquareMatrix;
+
 public class Main {
   public static void main(String[] args) {
     final int matrixSize = 300;

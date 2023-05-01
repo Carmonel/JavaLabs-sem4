@@ -1,15 +1,15 @@
-package Lab8.matrix.ParallelMatrixProduct;
+package Lab8;
 
-public class TimeChecher {
+public class TimeChecker {
     long startTime;
 
-    TimeChecher(){
+    public TimeChecker(){
         startTime = System.currentTimeMillis();
     }
-    void setNewStart(){
+    public void setNewStart(){
         startTime = System.currentTimeMillis();
     }
-    String printTimeFromStart(){
+    public String printTimeFromStart() {
         StringBuilder res = new StringBuilder();
         res.append(System.currentTimeMillis() - startTime);
         return res + " ms";
