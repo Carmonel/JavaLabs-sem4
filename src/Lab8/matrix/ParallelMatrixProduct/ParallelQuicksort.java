@@ -9,13 +9,15 @@ class Quicksort<T> implements Runnable{
     private final int low;
     private final int high;
     Thread[] threads;
+    int usedThreads;
     boolean txt;
 
-    public Quicksort(Comparable<T>[] arr, int low, int high, Thread[] threads, boolean outInfo){
+    public Quicksort(Comparable<T>[] arr, int low, int high, Thread[] threads, boolean outInfo, int usedThreads){
         this.arr = arr;
         this.low = low;
         this.high = high;
         this.threads = threads;
+        this.usedThreads = usedThreads;
         this.txt = outInfo;
     }
 
@@ -31,12 +33,31 @@ class Quicksort<T> implements Runnable{
         if (high>low){
             int i = partition(arr,low,high);
             quicksort(arr,low,i-1);
-            quicksort(arr,i+1,high);
+            quicksort(arr,i,high);
         }
     }
 
     public void parallelQuicksort(Comparable<T>[] arr, int low, int high) throws InterruptedException {
         if (high > low){
+            int mid = partition(arr, low, high);
+
+            if (threads.length - usedThreads > 1){
+                threads[usedThreads] = new Thread(new Quicksort<T>(arr, low, mid - 1, threads, txt, usedThreads+1));
+                threads[usedThreads++].start();
+                threads[usedThreads] = new Thread(new Quicksort<T>(arr, mid, high, threads, txt, usedThreads+1));
+                threads[usedThreads++].start();
+                return;
+            }
+            if (threads.length - usedThreads == 1){
+                threads[usedThreads] = new Thread(new Quicksort<T>(arr, low, mid - 1, threads, txt, usedThreads+1));
+                threads[usedThreads++].start();
+                quicksort(arr,mid,high);
+                return;
+            }
+            quicksort(arr,low,mid-1);
+            quicksort(arr,mid,high);
+        }
+        /*if (high > low){
             int mid = partition(arr, low, high);
             boolean founded1 = false;
             boolean founded2 = false;
@@ -58,7 +79,7 @@ class Quicksort<T> implements Runnable{
                     }
                 }
             }
-        }
+        }*/
     }
 
     public int partition(Comparable<T>[] A, int l,int r){
@@ -103,7 +124,7 @@ class Quicksort<T> implements Runnable{
 public class ParallelQuicksort {
     public static void main(String[] args){
         TimeChecher time = new TimeChecher();
-        int size = 10000;
+        int size = 100;
         Integer[] array = new Integer[size];
         int[] array2 = new int[size];
         for (int i = 0; i < size; i ++){
@@ -114,7 +135,7 @@ public class ParallelQuicksort {
         Thread[] threads = new Thread[threadCount];
         for (int i = 0; i < threadCount; i++) threads[i] = new Thread();
 
-        Quicksort<Integer> result = new Quicksort<>(array, 0, array.length-1, threads, false);
+        Quicksort<Integer> result = new Quicksort<>(array, 0, array.length-1, threads, false, 0);
         result.run();
         System.out.println("Threads -> " + time.printTimeFromStart());
 
