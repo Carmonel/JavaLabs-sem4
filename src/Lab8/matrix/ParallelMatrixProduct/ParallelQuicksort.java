@@ -131,7 +131,7 @@ public class ParallelQuicksort {
             array[i] = (int)(100*Math.random());
             array2[i] = array[i];
         }
-        int threadCount = 150;
+        int threadCount = 3;
         Thread[] threads = new Thread[threadCount];
         for (int i = 0; i < threadCount; i++) threads[i] = new Thread();
 

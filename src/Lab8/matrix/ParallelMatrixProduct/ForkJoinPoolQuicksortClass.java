@@ -40,7 +40,7 @@ public class ForkJoinPoolQuicksortClass<T> extends RecursiveTask<Comparable<T>[]
     }
     @Override
     protected Comparable<T>[] compute() {
-        if (high > low){
+        if (high - low > 1){
             int mid = partition(low, high);
 
             ForkJoinPoolQuicksortClass<T> left = new ForkJoinPoolQuicksortClass<T>(array, low, mid-1);
